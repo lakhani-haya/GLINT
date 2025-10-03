@@ -83,3 +83,5 @@ src/
 - **Typography**: System fonts with consistent sizing scale
 - **Spacing**: 8pt grid system (4/8/12/16/20/24)
 - **Layout**: Generous whitespace, subtle shadows, rounded corners
+
+## Application
