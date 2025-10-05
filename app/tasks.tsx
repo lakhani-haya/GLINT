@@ -5,22 +5,25 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  SafeAreaView,
   TextInput,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 import { palette } from '../src/theme/palette';
 import { spacing } from '../src/theme/spacing';
 import { typography } from '../src/theme/typography';
 import { useTasksStore } from '../src/store/useTasks';
-import { TaskCategory } from '../src/types';
+import { TaskCategory, Task } from '../src/types';
 import { formatDate, dayjs } from '../src/lib/dates';
+import TaskModal from '../src/components/TaskModal';
 
 const categories: TaskCategory[] = ['Hair', 'Nails', 'Lashes', 'Skin', 'Brows', 'Waxing', 'Other'];
 
 export default function TasksScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<TaskCategory | null>(null);
+  const [showTaskModal, setShowTaskModal] = useState(false);
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
   
   const { tasks, getTasksByCategory } = useTasksStore();
   
@@ -91,7 +94,14 @@ export default function TasksScreen() {
           </View>
         ) : (
           filteredTasks.map((task) => (
-            <TouchableOpacity key={task.id} style={styles.taskRow}>
+            <TouchableOpacity 
+              key={task.id} 
+              style={styles.taskRow}
+              onPress={() => {
+                setEditingTask(task);
+                setShowTaskModal(true);
+              }}
+            >
               <View style={styles.taskInfo}>
                 <Text style={styles.taskName}>{task.name}</Text>
                 <Text style={styles.taskFrequency}>
@@ -118,6 +128,16 @@ export default function TasksScreen() {
       <TouchableOpacity style={styles.bundleButton}>
         <Feather name="link" size={20} color={palette.brandInk} />
       </TouchableOpacity>
+
+      {/* Task Modal */}
+      <TaskModal
+        visible={showTaskModal}
+        onClose={() => {
+          setShowTaskModal(false);
+          setEditingTask(null);
+        }}
+        task={editingTask}
+      />
     </SafeAreaView>
   );
 }

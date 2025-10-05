@@ -3,11 +3,11 @@ import {
   View,
   Text,
   StyleSheet,
-  SafeAreaView,
   TouchableOpacity,
   Modal,
   ScrollView,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Calendar } from 'react-native-calendars';
 import { Feather } from '@expo/vector-icons';
 import { palette } from '../src/theme/palette';
@@ -15,11 +15,13 @@ import { spacing } from '../src/theme/spacing';
 import { typography } from '../src/theme/typography';
 import { useTasksStore } from '../src/store/useTasks';
 import { dayjs, formatDate } from '../src/lib/dates';
-
+import TaskModal from '../src/components/TaskModal';
 export default function CalendarScreen() {
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [currentMonth, setCurrentMonth] = useState(dayjs().format('YYYY-MM-DD'));
+  const [showTaskModal, setShowTaskModal] = useState(false);
   
+  const { getUpcomingOccurrences, getOccurrencesForDate, markTaskDone } = useTasksStore();
   const { getUpcomingOccurrences, getOccurrencesForDate, markTaskDone } = useTasksStore();
   
   // Get all occurrences for the current month
@@ -88,7 +90,10 @@ export default function CalendarScreen() {
       />
       
       {/* Floating Action Button */}
-      <TouchableOpacity style={styles.fab}>
+      <TouchableOpacity 
+        style={styles.fab}
+        onPress={() => setShowTaskModal(true)}
+      >
         <Feather name="plus" size={24} color={palette.brandInk} />
       </TouchableOpacity>
       
@@ -116,7 +121,13 @@ export default function CalendarScreen() {
             {selectedDateTasks.length === 0 ? (
               <View style={styles.emptyDay}>
                 <Text style={styles.emptyDayText}>No tasks scheduled</Text>
-                <TouchableOpacity style={styles.addTaskButton}>
+                <TouchableOpacity 
+                  style={styles.addTaskButton}
+                  onPress={() => {
+                    setSelectedDate(null);
+                    setShowTaskModal(true);
+                  }}
+                >
                   <Feather name="plus" size={16} color={palette.brandInk} />
                   <Text style={styles.addTaskButtonText}>Add Task</Text>
                 </TouchableOpacity>
@@ -151,6 +162,13 @@ export default function CalendarScreen() {
           </ScrollView>
         </SafeAreaView>
       </Modal>
+
+      {/* Task Modal */}
+      <TaskModal
+        visible={showTaskModal}
+        onClose={() => setShowTaskModal(false)}
+        preselectedDate={selectedDate || undefined}
+      />
     </SafeAreaView>
   );
 }

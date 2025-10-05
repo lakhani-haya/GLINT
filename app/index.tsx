@@ -5,20 +5,22 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  SafeAreaView,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 import { palette } from '../src/theme/palette';
 import { spacing } from '../src/theme/spacing';
 import { typography } from '../src/theme/typography';
 import { useTasksStore } from '../src/store/useTasks';
 import { dayjs, formatDate, isToday, isTomorrow } from '../src/lib/dates';
+import TaskModal from '../src/components/TaskModal';
 
 type FilterType = 'All' | 'Today' | 'Next 7d';
 
 export default function HomeScreen() {
   const [filter, setFilter] = useState<FilterType>('All');
-  const { getUpcomingOccurrences } = useTasksStore();
+  const [showTaskModal, setShowTaskModal] = useState(false);
+  const { getUpcomingOccurrences, markTaskDone } = useTasksStore();
   
   const upcomingOccurrences = getUpcomingOccurrences(14);
   
@@ -77,7 +79,10 @@ export default function HomeScreen() {
         </View>
         
         {/* Add Task Button */}
-        <TouchableOpacity style={styles.addButton}>
+        <TouchableOpacity 
+          style={styles.addButton}
+          onPress={() => setShowTaskModal(true)}
+        >
           <Feather name="plus" size={20} color={palette.brandInk} />
           <Text style={styles.addButtonText}>Add Task</Text>
         </TouchableOpacity>
@@ -106,7 +111,10 @@ export default function HomeScreen() {
                       </Text>
                     )}
                   </View>
-                  <TouchableOpacity style={styles.doneButton}>
+                  <TouchableOpacity 
+                    style={styles.doneButton}
+                    onPress={() => markTaskDone(task.id)}
+                  >
                     <Feather name="check" size={18} color={palette.muted} />
                   </TouchableOpacity>
                 </View>
@@ -115,6 +123,12 @@ export default function HomeScreen() {
           ))
         )}
       </ScrollView>
+
+      {/* Task Modal */}
+      <TaskModal
+        visible={showTaskModal}
+        onClose={() => setShowTaskModal(false)}
+      />
     </SafeAreaView>
   );
 }
