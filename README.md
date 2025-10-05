@@ -107,22 +107,9 @@ src/
 
 ## Future Enhancements
 
-🚀 **AI Integration in Progress**: Currently working on integrating AI capabilities for smarter task suggestions, personalized scheduling recommendations, and intelligent bundling of related grooming tasks based on user patterns and preferences.
+ **AI Integration in Progress**: Currently working on integrating AI capabilities for smarter task suggestions, personalized scheduling recommendations, and intelligent bundling of related grooming tasks based on user patterns and preferences.
 
-## Contributing
 
-### Adding Screenshots
-
-Screenshots are stored in the `/screenshots` directory. To update or add new screenshots:
-
-1. Take screenshots of the app running on your device via Expo Go
-2. Save them as PNG files with the names specified in `/screenshots/README.md`
-3. Ensure images are high quality and show the app with sample data
-4. Images will automatically appear in this README
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Acknowledgments
 
