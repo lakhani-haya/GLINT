@@ -105,6 +105,10 @@ src/
 - **Spacing**: 8pt grid system (4/8/12/16/20/24)
 - **Layout**: Generous whitespace, subtle shadows, rounded corners
 
+## Future Enhancements
+
+🚀 **AI Integration in Progress**: Currently working on integrating AI capabilities for smarter task suggestions, personalized scheduling recommendations, and intelligent bundling of related grooming tasks based on user patterns and preferences.
+
 ## Contributing
 
 ### Adding Screenshots
