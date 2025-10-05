@@ -10,6 +10,42 @@ A professional, minimalist React Native app for personal grooming scheduling. Bu
 - **Minimalist Design**: Clean interface with subtle pastel pink accents
 - **Local State**: No backend required - all data stored locally
 
+## Screenshots
+
+<div align="center">
+
+### Home Screen - Upcoming Tasks
+<img src="screenshots/home-screen.png" alt="Home Screen showing upcoming grooming tasks" width="300"/>
+
+*Clean, minimalist home view displaying upcoming tasks with pastel pink accents*
+
+### Calendar View - Monthly Overview
+<img src="screenshots/calendar-screen.png" alt="Calendar view with task dots" width="300"/>
+
+*Monthly calendar showing task indicators and day selection*
+
+### Task Creation - Add New Task
+<img src="screenshots/add-task-modal.png" alt="Task creation modal with categories" width="300"/>
+
+*Comprehensive task creation form with category selection and recurrence settings*
+
+### Task Library - Manage All Tasks
+<img src="screenshots/tasks-screen.png" alt="Task library organized by categories" width="300"/>
+
+*Task library with search, filtering, and category organization*
+
+### Day View - Daily Task Management
+<img src="screenshots/day-view-modal.png" alt="Day view showing tasks for selected date" width="300"/>
+
+*Day detail view with mark complete and edit actions*
+
+### Settings - App Preferences
+<img src="screenshots/settings-screen.png" alt="Settings screen with preferences" width="300"/>
+
+*Settings panel for customizing week start, reminders, and app behavior*
+
+</div>
+
 ## Tech Stack
 
 - React Native with Expo
@@ -84,4 +120,23 @@ src/
 - **Spacing**: 8pt grid system (4/8/12/16/20/24)
 - **Layout**: Generous whitespace, subtle shadows, rounded corners
 
-## Application
+## Contributing
+
+### Adding Screenshots
+
+Screenshots are stored in the `/screenshots` directory. To update or add new screenshots:
+
+1. Take screenshots of the app running on your device via Expo Go
+2. Save them as PNG files with the names specified in `/screenshots/README.md`
+3. Ensure images are high quality and show the app with sample data
+4. Images will automatically appear in this README
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Acknowledgments
+
+- Built with [Expo](https://expo.dev/) and [React Native](https://reactnative.dev/)
+- Icons from [Feather Icons](https://feathericons.com/)
+- Calendar component from [react-native-calendars](https://github.com/wix/react-native-calendars)
