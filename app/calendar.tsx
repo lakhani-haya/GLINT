@@ -22,7 +22,6 @@ export default function CalendarScreen() {
   const [showTaskModal, setShowTaskModal] = useState(false);
   
   const { getUpcomingOccurrences, getOccurrencesForDate, markTaskDone } = useTasksStore();
-  const { getUpcomingOccurrences, getOccurrencesForDate, markTaskDone } = useTasksStore();
   
   // Get all occurrences for the current month
   const monthStart = dayjs(currentMonth).startOf('month');
