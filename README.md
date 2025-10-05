@@ -12,26 +12,24 @@ A professional, minimalist React Native app for personal grooming scheduling. Bu
 
 ## Screenshots
 
-*Screenshots will be added once available. The app features:*
-
-- **Calendar View**: Monthly calendar with task indicators and date selection
-- **Task Creation**: Comprehensive form with category selection and recurrence settings  
-- **Settings Panel**: Customizable preferences for week start, reminders, and app behavior
-
-<!-- Uncomment when screenshots are added:
 <div align="center">
 
 ### Calendar View - Monthly Overview
-<img src="screenshots/calendar-screen.png" alt="Calendar view with task dots" width="300"/>
+<img src="screenshots/calender (1).jpeg" alt="Calendar view with task dots and monthly layout" width="300"/>
+
+*Monthly calendar showing task indicators and date selection with clean, minimalist design*
 
 ### Task Creation - Add New Task
-<img src="screenshots/add-task-modal.png" alt="Task creation modal with categories" width="300"/>
+<img src="screenshots/add-task.jpeg" alt="Task creation modal with categories and settings" width="300"/>
+
+*Comprehensive task creation form with category selection and recurrence settings*
 
 ### Settings - App Preferences
-<img src="screenshots/settings-screen.png" alt="Settings screen with preferences" width="300"/>
+<img src="screenshots/settings.jpeg" alt="Settings screen with preferences and toggles" width="300"/>
+
+*Settings panel for customizing week start, reminders, and app behavior*
 
 </div>
--->
 
 ## Tech Stack
 
