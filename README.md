@@ -14,11 +14,6 @@ A professional, minimalist React Native app for personal grooming scheduling. Bu
 
 <div align="center">
 
-### Home Screen - Upcoming Tasks
-<img src="screenshots/home-screen.png" alt="Home Screen showing upcoming grooming tasks" width="300"/>
-
-*Clean, minimalist home view displaying upcoming tasks with pastel pink accents*
-
 ### Calendar View - Monthly Overview
 <img src="screenshots/calendar-screen.png" alt="Calendar view with task dots" width="300"/>
 
@@ -28,16 +23,6 @@ A professional, minimalist React Native app for personal grooming scheduling. Bu
 <img src="screenshots/add-task-modal.png" alt="Task creation modal with categories" width="300"/>
 
 *Comprehensive task creation form with category selection and recurrence settings*
-
-### Task Library - Manage All Tasks
-<img src="screenshots/tasks-screen.png" alt="Task library organized by categories" width="300"/>
-
-*Task library with search, filtering, and category organization*
-
-### Day View - Daily Task Management
-<img src="screenshots/day-view-modal.png" alt="Day view showing tasks for selected date" width="300"/>
-
-*Day detail view with mark complete and edit actions*
 
 ### Settings - App Preferences
 <img src="screenshots/settings-screen.png" alt="Settings screen with preferences" width="300"/>
