@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Modal,
   ScrollView,
+  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Calendar } from 'react-native-calendars';
@@ -50,8 +51,11 @@ export default function CalendarScreen() {
   
   const selectedDateTasks = selectedDate ? getOccurrencesForDate(selectedDate) : [];
   
-  const handleTaskDone = (taskId: string) => {
+  const handleTaskDone = (taskId: string, taskName: string) => {
     markTaskDone(taskId);
+    Alert.alert('Task Completed', `${taskName} has been marked as done!`, [
+      { text: 'OK', style: 'default' }
+    ]);
   };
   
   return (

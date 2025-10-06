@@ -114,7 +114,12 @@ export default function HomeScreen() {
                   </View>
                   <TouchableOpacity 
                     style={styles.doneButton}
-                    onPress={() => markTaskDone(task.id)}
+                    onPress={() => {
+                      markTaskDone(task.id);
+                      Alert.alert('Task Completed', `${task.name} has been marked as done!`, [
+                        { text: 'OK', style: 'default' }
+                      ]);
+                    }}
                   >
                     <Feather name="check" size={18} color={palette.muted} />
                   </TouchableOpacity>
