@@ -129,11 +129,18 @@ export const useTasksStore = create<TasksState>((set, get) => ({
   },
   
   markTaskDone: (id) => {
-    set((state) => ({
-      tasks: state.tasks.map((task) =>
-        task.id === id ? updateTaskAfterCompletion(task) : task
-      ),
-    }));
+    console.log('Marking task done:', id);
+    set((state) => {
+      const updatedTasks = state.tasks.map((task) => {
+        if (task.id === id) {
+          const updatedTask = updateTaskAfterCompletion(task);
+          console.log('Task updated:', updatedTask);
+          return updatedTask;
+        }
+        return task;
+      });
+      return { tasks: updatedTasks };
+    });
   },
   
   updateSettings: (newSettings) => {
