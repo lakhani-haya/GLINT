@@ -6,38 +6,46 @@ export const getNextOccurrence = (task: Task, fromDate: Dayjs = dayjs()): Dayjs 
   if (!task.recurrence || !task.active) return null;
 
   const { recurrence } = task;
-  
-  // Use lastDoneAt if available, otherwise use anchorDate, otherwise use current date
-  let anchor: Dayjs;
-  if (task.lastDoneAt) {
-    anchor = dayjs(task.lastDoneAt);
-  } else if (recurrence.anchorDate) {
-    anchor = dayjs(recurrence.anchorDate);
-  } else {
-    anchor = fromDate;
-  }
+  const intervalDays = getIntervalDays(recurrence.every, recurrence.unit);
   
   if (recurrence.kind === 'interval') {
-    const intervalDays = getIntervalDays(recurrence.every, recurrence.unit);
-    
-    // If we have a lastDoneAt, the next occurrence is intervalDays after that
+    // If task was completed, next occurrence is intervalDays after lastDoneAt
     if (task.lastDoneAt) {
-      const nextFromLastDone = anchor.add(intervalDays, 'days');
-      if (nextFromLastDone.isAfter(fromDate, 'day')) {
+      const lastDone = dayjs(task.lastDoneAt);
+      const nextFromLastDone = lastDone.add(intervalDays, 'days');
+      
+      // Only return if it's after fromDate
+      if (nextFromLastDone.isAfter(fromDate, 'day') || nextFromLastDone.isSame(fromDate, 'day')) {
+        // Check count and until limits
+        const anchorDate = recurrence.anchorDate ? dayjs(recurrence.anchorDate) : lastDone;
+        
+        if (recurrence.count) {
+          const totalOccurrences = Math.floor(nextFromLastDone.diff(anchorDate, 'days') / intervalDays) + 1;
+          if (totalOccurrences > recurrence.count) return null;
+        }
+        
+        if (recurrence.until && nextFromLastDone.isAfter(dayjs(recurrence.until))) {
+          return null;
+        }
+        
         return nextFromLastDone;
       }
+      return null;
     }
     
-    // Otherwise, find the next occurrence after fromDate starting from anchor
-    let nextDate = anchor;
+    // If task hasn't been completed, calculate from anchor date
+    const anchorDate = recurrence.anchorDate ? dayjs(recurrence.anchorDate) : fromDate;
+    let nextDate = anchorDate;
+    
+    // Find the next occurrence after fromDate
     while (nextDate.isBefore(fromDate, 'day') || nextDate.isSame(fromDate, 'day')) {
       nextDate = nextDate.add(intervalDays, 'days');
     }
     
     // Check count limit
     if (recurrence.count) {
-      const occurrencesSince = Math.floor(nextDate.diff(anchor, 'days') / intervalDays);
-      if (occurrencesSince >= recurrence.count) return null;
+      const occurrenceNumber = Math.floor(nextDate.diff(anchorDate, 'days') / intervalDays) + 1;
+      if (occurrenceNumber > recurrence.count) return null;
     }
     
     // Check until date
@@ -58,19 +66,34 @@ export const generateOccurrences = (task: Task, start: Dayjs, end: Dayjs): Dayjs
   const { recurrence } = task;
   const intervalDays = getIntervalDays(recurrence.every, recurrence.unit);
   
-  // Start from the appropriate anchor date
-  let anchor: Dayjs;
+  // Determine the anchor date - the date from which we calculate the pattern
+  const anchorDate = recurrence.anchorDate ? dayjs(recurrence.anchorDate) : start;
+  
+  // If task was completed, calculate next due date from lastDoneAt
   if (task.lastDoneAt) {
-    // If task was done, start from the next occurrence after lastDoneAt
-    anchor = dayjs(task.lastDoneAt).add(intervalDays, 'days');
-  } else if (recurrence.anchorDate) {
-    anchor = dayjs(recurrence.anchorDate);
-  } else {
-    anchor = start;
+    const lastDone = dayjs(task.lastDoneAt);
+    const nextDue = lastDone.add(intervalDays, 'days');
+    
+    // Only include this next occurrence if it falls within our date range
+    if ((nextDue.isAfter(start, 'day') || nextDue.isSame(start, 'day')) && 
+        (nextDue.isBefore(end, 'day') || nextDue.isSame(end, 'day'))) {
+      
+      // Check count limit
+      if (recurrence.count) {
+        const totalOccurrences = Math.floor(nextDue.diff(anchorDate, 'days') / intervalDays) + 1;
+        if (totalOccurrences <= recurrence.count) {
+          occurrences.push(nextDue);
+        }
+      } else if (!recurrence.until || nextDue.isBefore(dayjs(recurrence.until)) || nextDue.isSame(dayjs(recurrence.until))) {
+        occurrences.push(nextDue);
+      }
+    }
+    
+    return occurrences;
   }
   
-  // Generate occurrences from anchor date
-  let current = anchor;
+  // If task hasn't been completed yet, generate occurrences from anchor date
+  let current = anchorDate;
   
   // Move current to the first occurrence within our range
   while (current.isBefore(start, 'day')) {
@@ -81,8 +104,8 @@ export const generateOccurrences = (task: Task, start: Dayjs, end: Dayjs): Dayjs
   while (current.isBefore(end, 'day') || current.isSame(end, 'day')) {
     // Check count limit
     if (recurrence.count) {
-      const occurrencesSince = Math.floor(current.diff(anchor, 'days') / intervalDays);
-      if (occurrencesSince >= recurrence.count) break;
+      const occurrenceNumber = Math.floor(current.diff(anchorDate, 'days') / intervalDays) + 1;
+      if (occurrenceNumber > recurrence.count) break;
     }
     
     // Check until date
@@ -115,25 +138,7 @@ export const updateTaskAfterCompletion = (task: Task): Task => {
   const nowStr = now.toISOString();
   
   // Calculate the next due date based on the completion time
-  let nextDue: Dayjs | null = null;
-  if (task.recurrence) {
-    const intervalDays = getIntervalDays(task.recurrence.every, task.recurrence.unit);
-    nextDue = now.add(intervalDays, 'days');
-    
-    // Check count limit
-    if (task.recurrence.count) {
-      const anchor = dayjs(task.recurrence.anchorDate || nowStr);
-      const occurrencesSince = Math.floor(nextDue.diff(anchor, 'days') / intervalDays);
-      if (occurrencesSince >= task.recurrence.count) {
-        nextDue = null;
-      }
-    }
-    
-    // Check until date
-    if (task.recurrence.until && nextDue && nextDue.isAfter(dayjs(task.recurrence.until))) {
-      nextDue = null;
-    }
-  }
+  const nextDue = getNextOccurrence(task, now);
   
   return {
     ...task,

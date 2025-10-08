@@ -150,7 +150,7 @@ export default function CalendarScreen() {
                   <View style={styles.dayTaskActions}>
                     <TouchableOpacity
                       style={styles.doneTaskButton}
-                      onPress={() => handleTaskDone(task.id)}
+                      onPress={() => handleTaskDone(task.id, task.name)}
                     >
                       <Feather name="check" size={18} color={palette.success} />
                       <Text style={styles.doneTaskButtonText}>Done</Text>
