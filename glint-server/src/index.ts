@@ -19,7 +19,8 @@ app.post('/ai/frequency', async (req, res) => {
       confidence: { type: "number", minimum: 0, maximum: 1 },
       reason: { type: "string" }
     },
-    required: ["every","unit"]
+    required: ["every","unit"],
+    additionalProperties: false
   };
   try {
     const r = await client.chat.completions.create({
@@ -55,7 +56,8 @@ app.post('/ai/reschedule', async (req, res) => {
       reason: { type: "string" },
       confidence: { type: "number", minimum: 0, maximum: 1 }
     },
-    required: ["newDate"]
+    required: ["newDate"],
+    additionalProperties: false
   };
   try {
     const r = await client.chat.completions.create({
@@ -88,4 +90,4 @@ app.get('/health', (req, res) => {
 });
 
 const port = Number(process.env.PORT ?? 3000);
-app.listen(port, () => console.log(`Glint AI API on http://localhost:${port}`));
+app.listen(port, '0.0.0.0', () => console.log(`Glint AI API on http://localhost:${port}`));
