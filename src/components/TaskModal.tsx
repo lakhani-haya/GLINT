@@ -8,6 +8,8 @@ import {
   TextInput,
   ScrollView,
   Switch,
+  Alert,
+  ActivityIndicator,
 } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { palette } from '../theme/palette';
@@ -16,6 +18,7 @@ import { typography } from '../theme/typography';
 import { useTasksStore } from '../store/useTasks';
 import { Task, TaskCategory, FrequencyUnit } from '../types';
 import { dayjs } from '../lib/dates';
+import { getFrequencyAdvice } from '../services/ai';
 
 interface TaskModalProps {
   visible: boolean;
@@ -40,6 +43,8 @@ export default function TaskModal({ visible, onClose, task, preselectedDate }: T
   );
   const [isFlexible, setIsFlexible] = useState(task?.isFlexible || false);
   const [hasRecurrence, setHasRecurrence] = useState(!!task?.recurrence);
+  const [aiSuggestion, setAiSuggestion] = useState<{ every: number; unit: string; reason?: string } | null>(null);
+  const [loadingAi, setLoadingAi] = useState(false);
 
   const handleSave = () => {
     if (!name.trim()) return;
@@ -87,6 +92,44 @@ export default function TaskModal({ visible, onClose, task, preselectedDate }: T
     setAnchorDate(dayjs().format('YYYY-MM-DD'));
     setIsFlexible(false);
     setHasRecurrence(false);
+    setAiSuggestion(null);
+  };
+
+  const handleGetAiSuggestion = async () => {
+    if (!name.trim()) {
+      Alert.alert('Enter Task Name', 'Please enter a task name first to get AI suggestions.');
+      return;
+    }
+
+    setLoadingAi(true);
+    try {
+      const suggestion = await getFrequencyAdvice({
+        taskName: name.trim(),
+        history: task ? {
+          lastDoneISO: task.lastDoneAt || undefined,
+          notes: task.notes
+        } : undefined,
+        profile: {
+          budgetTier: 'mid' // Default for now
+        }
+      });
+      
+      setAiSuggestion(suggestion);
+      setHasRecurrence(true);
+    } catch (error) {
+      console.error('AI suggestion error:', error);
+      Alert.alert('AI Error', 'Failed to get AI suggestion. Please try again later.');
+    } finally {
+      setLoadingAi(false);
+    }
+  };
+
+  const handleApplyAiSuggestion = () => {
+    if (aiSuggestion) {
+      setEvery(aiSuggestion.every.toString());
+      setUnit(aiSuggestion.unit as FrequencyUnit);
+      setAiSuggestion(null);
+    }
   };
 
   return (
@@ -154,6 +197,45 @@ export default function TaskModal({ visible, onClose, task, preselectedDate }: T
                 thumbColor={hasRecurrence ? palette.brandInk : palette.muted}
               />
             </View>
+          </View>
+
+          {/* AI Suggestion */}
+          <View style={styles.section}>
+            <TouchableOpacity 
+              style={styles.aiButton} 
+              onPress={handleGetAiSuggestion}
+              disabled={loadingAi}
+            >
+              {loadingAi ? (
+                <ActivityIndicator size="small" color={palette.brandInk} />
+              ) : (
+                <Feather name="zap" size={16} color={palette.brandInk} />
+              )}
+              <Text style={styles.aiButtonText}>
+                {loadingAi ? 'Getting AI suggestion...' : 'Get AI suggestion'}
+              </Text>
+            </TouchableOpacity>
+            
+            {aiSuggestion && (
+              <View style={styles.aiSuggestionCard}>
+                <View style={styles.aiSuggestionHeader}>
+                  <Feather name="zap" size={16} color={palette.brand} />
+                  <Text style={styles.aiSuggestionTitle}>AI Recommendation</Text>
+                </View>
+                <Text style={styles.aiSuggestionText}>
+                  Every {aiSuggestion.every} {aiSuggestion.unit}
+                </Text>
+                {aiSuggestion.reason && (
+                  <Text style={styles.aiSuggestionReason}>{aiSuggestion.reason}</Text>
+                )}
+                <TouchableOpacity 
+                  style={styles.applyButton} 
+                  onPress={handleApplyAiSuggestion}
+                >
+                  <Text style={styles.applyButtonText}>Apply</Text>
+                </TouchableOpacity>
+              </View>
+            )}
           </View>
 
           {/* Frequency (if recurring) */}
@@ -387,5 +469,63 @@ const styles = StyleSheet.create({
     ...typography.body,
     color: '#EF4444',
     fontWeight: '600',
+  },
+  aiButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: palette.brand,
+    borderRadius: 10,
+    paddingVertical: spacing.md,
+    gap: spacing.sm,
+  },
+  aiButtonText: {
+    ...typography.body,
+    color: palette.brandInk,
+    fontWeight: '600',
+  },
+  aiSuggestionCard: {
+    backgroundColor: palette.surface,
+    borderRadius: 12,
+    padding: spacing.lg,
+    marginTop: spacing.md,
+    borderLeftWidth: 3,
+    borderLeftColor: palette.brand,
+  },
+  aiSuggestionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    marginBottom: spacing.sm,
+  },
+  aiSuggestionTitle: {
+    ...typography.body,
+    color: palette.ink,
+    fontWeight: '600',
+  },
+  aiSuggestionText: {
+    ...typography.body,
+    color: palette.ink,
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: spacing.sm,
+  },
+  aiSuggestionReason: {
+    ...typography.caption,
+    color: palette.muted,
+    marginBottom: spacing.md,
+  },
+  applyButton: {
+    backgroundColor: palette.brand,
+    borderRadius: 8,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
+    alignSelf: 'flex-start',
+  },
+  applyButtonText: {
+    ...typography.body,
+    color: palette.brandInk,
+    fontWeight: '600',
+    fontSize: 14,
   },
 });
