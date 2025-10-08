@@ -109,6 +109,11 @@ src/
 
  **AI Integration in Progress**: Currently working on integrating AI capabilities for smarter task suggestions, personalized scheduling recommendations, and intelligent bundling of related grooming tasks based on user patterns and preferences.
 
+## Security
+
+🔒 **Important:** This project uses API keys that must be kept secure. Please review [SECURITY.md](SECURITY.md) for guidelines on handling sensitive information and environment variables.
+
+**Never commit `.env` files or API keys to the repository.**
 
 
 ## Acknowledgments

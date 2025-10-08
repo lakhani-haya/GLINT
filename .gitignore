@@ -59,7 +59,19 @@ web-build/
 
 # Environment variables (API keys, secrets)
 .env
+.env.*
+!.env.example
 .env.local
 .env.production
 .env.staging
+.env.development
+.env.test
 glint-server/.env
+glint-server/.env.*
+!glint-server/.env.example
+
+# API keys and secrets
+*.pem
+*.key
+secrets.json
+config.secret.*

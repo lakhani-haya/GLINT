@@ -1,0 +1,17 @@
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+
+# API keys
+*.pem
+*.key
+secrets.json
+config.secret.*
+
+# Logs
+*.log
+logs/
+
+# Development
+.DS_Store

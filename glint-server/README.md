@@ -9,6 +9,8 @@ AI-powered backend for the Glint grooming scheduler app.
 
 ## Setup
 
+⚠️ **Security Notice:** Never commit your `.env` file or expose your OpenAI API key. See [../SECURITY.md](../SECURITY.md) for details.
+
 1. Install dependencies:
 ```bash
 npm install
@@ -24,6 +26,11 @@ cp .env.example .env
 OPENAI_API_KEY=your_openai_api_key_here
 PORT=3000
 ```
+
+**Important:** 
+- The `.env` file is automatically ignored by git
+- Never share or commit your actual API key
+- Keep your `.env` file local only
 
 ## Development
 
