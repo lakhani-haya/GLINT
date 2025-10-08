@@ -56,3 +56,10 @@ web-build/
 
 # Local Netlify folder
 .netlify
+
+# Environment variables (API keys, secrets)
+.env
+.env.local
+.env.production
+.env.staging
+glint-server/.env
